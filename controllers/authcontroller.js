@@ -45,7 +45,7 @@ exports.login=async(req,res)=>{
               const user=await User.findOne({email}).select('+password');          
             
               if(!user || !(await user.correctPassword(password,user.password))){
-                  return res.status(400).send({message:"Password is invalid!"});
+                  return res.status(400).send({message:"Password is incorrect!"});
                   };
             
             
@@ -53,7 +53,7 @@ exports.login=async(req,res)=>{
           const token=signinToken(user._id);
           res.status(201).json({
             status:'success',
-            message:'The email and password valid,Logged In',
+            message:'Logged In',
             token,
         })
         }
