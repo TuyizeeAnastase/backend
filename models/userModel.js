@@ -47,6 +47,7 @@ userSchema.methods.correctPassword=async function(candidateP,userP){
     return await bcrypt.compareSync(candidateP,userP);
 };
 
+
 const User=mongoose.model('User',userSchema);
 
 module.exports=User;

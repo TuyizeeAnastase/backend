@@ -1,6 +1,7 @@
 import User from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import {promisify} from 'util';
 
 const signinToken=id=>{
     return jwt.sign({id},'jsonWebToken_Password_Webtoken_Secret',{
@@ -56,4 +57,39 @@ exports.login=async(req,res)=>{
             message:'The email and password valid,Logged In',
             token,
         })
+        }
+
+        exports.protect=async (req,res,next)=>{
+            // Getting token and check if is there
+            let token;
+             if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+                 token=req.headers.authorization.split(' ')[1];
+             }
+        
+             if(!token){
+                res.status(401).json({
+                    status:'fail',
+                    message:'You are not logged in! please log in to get access'
+                })
+             }
+            //verification token
+            let decoded;
+            try{
+           decoded=await promisify(jwt.verify)(token,'jsonWebToken_Password_Webtoken_Secret')
+           }
+           catch(err){
+            res.status(401).json({
+                status:'fail',
+                message:'invalid token,login to get one'
+            })
+           }
+            //check if user still  exist
+           const frestUser= await User.findById(decoded.id);
+           if(!frestUser){
+            res.status(401).json({
+                status:'fail',
+                message:'token is no long accepted'
+            })
+           }
+            next();
         }

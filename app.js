@@ -13,6 +13,9 @@ app.use(morgan('dev'));
 
 app.use(bodyParser.json());
 
+app.use((req,res,next)=>{
+    next();
+})
 
 mongoose.connect('mongodb://127.0.0.1:27017/MyBrand',
 {
