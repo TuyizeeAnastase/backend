@@ -70,7 +70,8 @@ exports.login=async(req,res)=>{
                 res.status(401).json({
                     status:'fail',
                     message:'You are not logged in! please log in to get access'
-                })
+                });
+                return;
              }
             //verification token
             let decoded;
