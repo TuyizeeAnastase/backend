@@ -13,21 +13,40 @@ app.use(morgan('dev'));
 
 app.use(bodyParser.json());
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    next();
+});
 
-
-mongoose.connect('mongodb+srv://Tuyizere:anastasetuyizere@cluster0.6kcyh.mongodb.net/NewBrand?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://AnastaseTuyizere:anastasetuyizere@cluster0.so3mc.mongodb.net/MyBrand?retryWrites=true&w=majority',
 {
     useNewUrlParser:true,
     useFindAndModify:false,
     useUnifiedTopology:true
 })
 .then(()=>{
-    
-    console.log('database connected successfully')
+    console.log('database connected remotely')
 })
 .catch(err=>{
     console.log(err)
-})
+});
+
+// mongoose.connect('mongodb://127.0.0.1:27017',
+// {
+//     useNewUrlParser:true,
+//     useFindAndModify:false,
+//     useUnifiedTopology:true
+// })
+// .then(()=>{
+    
+//     console.log('database connected locally')
+// })
+// .catch(err=>{
+//     console.log(err)
+// })
+
 
 app.use('/api/v1/blogs',articleRouter);
 app.use('/api/v1/users',userRouter);
