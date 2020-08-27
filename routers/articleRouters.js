@@ -6,7 +6,7 @@ const router=express.Router();
 
 router
    .route('/')
-   .get(authcontroller.protect,articleController.getArticles)
+   .get(articleController.getArticles)
    
 router
    .route('/new')

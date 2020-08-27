@@ -4,8 +4,8 @@ import bcrypt from 'bcryptjs';
 import {promisify} from 'util';
 
 const signinToken=id=>{
-    return jwt.sign({id},'jsonWebToken_Password_Webtoken_Secret',{
-        expiresIn:'90d'
+    return jwt.sign({id},process.env.JWT_SECRET,{
+        expiresIn:process.env.JWT_EXPIRES_IN
 });
 };
 
@@ -67,30 +67,46 @@ exports.login=async(req,res)=>{
              }
         
              if(!token){
+                 return next(
                 res.status(401).json({
                     status:'fail',
                     message:'You are not logged in! please log in to get access'
-                });
-                return;
+                })
+                 ) 
              }
             //verification token
-            let decoded;
+
             try{
-           decoded=await promisify(jwt.verify)(token,'jsonWebToken_Password_Webtoken_Secret')
-           }
-           catch(err){
-            res.status(401).json({
-                status:'fail',
-                message:'invalid token,login to get one'
-            })
-           }
+            const decoded=await promisify(jwt.verify)(token,'jsonWebToken_Password_Webtoken_Secret');
+        
             //check if user still  exist
            const frestUser= await User.findById(decoded.id);
            if(!frestUser){
+               return next(
             res.status(401).json({
                 status:'fail',
                 message:'token is no long accepted'
             })
+               )
            }
+        }catch(error){
+            let notify
+            if(error.name=="jsonWebTokenError"){
+
+            notify="invalid token , login again"
+            }
+            else if(error.name=="TokenExpiredError"){
+                notify="your token has expired,please log in again"
+            }
+            else{
+                notify=error
+            }
+            return next(
+                res.status(401).json({
+                    status:'failed',
+                    notify
+                })
+            )
+        }
             next();
         }

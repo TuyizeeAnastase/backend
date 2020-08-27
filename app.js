@@ -3,9 +3,12 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import { async } from 'regenerator-runtime';
 import bodyParser, { urlencoded } from 'body-parser';
+import dotenv from 'dotenv';
 
 import articleRouter from './routers/articleRouters';
 import userRouter from './routers/userRouters';
+
+dotenv.config({path:'./config.env'});
 
 const app=express();
 
@@ -15,12 +18,17 @@ app.use(bodyParser.json());
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization");
     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
     next();
 });
 
-mongoose.connect('mongodb+srv://AnastaseTuyizere:anastasetuyizere@cluster0.so3mc.mongodb.net/MyBrand?retryWrites=true&w=majority',
+const DB=process.env.DATABASE.replace(
+    '<PASSWORD>',
+    process.env.DATABASE_PASSWORD
+)
+
+mongoose.connect(DB,
 {
     useNewUrlParser:true,
     useFindAndModify:false,

@@ -6,7 +6,7 @@ exports.getArticles=async (req,res)=>{
         res.status(200).json({
           status:'success',
           results:blogs.length,
-          data:{
+          articles:{
               blogs
           }
       })
@@ -19,19 +19,17 @@ exports.getArticles=async (req,res)=>{
     }
 
 exports.createArticle=async (req,res)=>{
-    try{
     const newArticle=await Article.create(req.body);
+    if(!newArticle) return res.status(405).json({
+            status:'fail',
+            message:'Unable to create an article'
+        })
+    
     res.status(201).json({
         data:{
             article:newArticle
         }
     })
-}catch(err){
-    res.status(405).json({
-        status:'fail',
-        message:'Unable to create an article'
-    })
-}
 }
 
 exports.getArticle=async(req,res)=>{
